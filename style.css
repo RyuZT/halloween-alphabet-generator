@@ -1,0 +1,389 @@
+/* =========================================================
+   Halloween Alphabet Generator — style.css
+   ========================================================= */
+
+:root {
+  --orange: #ff7a18;
+  --orange-deep: #ff2d00;
+  --ink: #f4e9ff;
+  --muted: #b79fd9;
+  --bg1: #1a0b2e;
+  --bg2: #05000c;
+  --radius: 18px;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.65);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Poppins", "Segoe UI", system-ui, sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at 50% 0%, var(--bg1), var(--bg2) 70%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   Dekorasi terbang
+   ========================================================= */
+.decor {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.decor span {
+  position: absolute;
+  top: -12vh;
+  filter: drop-shadow(0 0 10px rgba(255, 122, 24, 0.6));
+  animation: fall linear infinite, sway ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes fall {
+  from { transform: translateY(-15vh); }
+  to   { transform: translateY(115vh); }
+}
+@keyframes sway {
+  from { margin-left: -35px; }
+  to   { margin-left: 35px; }
+}
+
+/* =========================================================
+   Header / Footer
+   ========================================================= */
+.site-header {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 34px 16px 8px;
+}
+
+.logo {
+  margin: 0;
+  font-family: "Creepster", cursive;
+  font-size: clamp(1.9rem, 5vw, 3.4rem);
+  letter-spacing: 2px;
+  color: var(--orange);
+  text-shadow:
+    0 0 8px rgba(255, 122, 24, 0.9),
+    0 0 26px rgba(255, 45, 0, 0.7),
+    0 4px 0 rgba(0, 0, 0, 0.55);
+  animation: flicker 5s infinite;
+}
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.6; }
+}
+.bob { display: inline-block; animation: bob 3s ease-in-out infinite; }
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50%      { transform: translateY(-8px) rotate(6deg); }
+}
+
+.tagline {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  font-weight: 300;
+}
+
+.site-footer {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 26px 16px 34px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.site-footer strong { color: var(--orange); font-weight: 600; }
+#result {
+  font-family: "Creepster", cursive;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  vertical-align: -4px;
+  text-shadow: 0 0 12px rgba(255, 122, 24, 0.9);
+}
+
+/* =========================================================
+   Layout
+   ========================================================= */
+.app {
+  position: relative;
+  z-index: 3;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 14px 18px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* =========================================================
+   Panel aksi
+   ========================================================= */
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(18, 8, 32, 0.78);
+  border: 1px solid rgba(255, 122, 24, 0.25);
+  border-radius: var(--radius);
+  padding: 20px 18px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.btn-pick {
+  cursor: pointer;
+  width: min(340px, 100%);
+  padding: 16px 24px;
+  border-radius: 15px;
+  border: 2px solid #ffd39b;
+  background: linear-gradient(180deg, var(--orange), var(--orange-deep));
+  color: #20060f;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  box-shadow: 0 0 26px rgba(255, 122, 24, 0.5);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.btn-pick:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(255, 122, 24, 0.8); }
+.btn-pick:active { transform: translateY(0) scale(0.98); }
+
+.hint { margin: 0; font-size: 0.78rem; color: var(--muted); }
+kbd {
+  font-family: inherit;
+  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 122, 24, 0.35);
+  border-radius: 6px;
+  padding: 1px 6px;
+  color: #ffd39b;
+}
+
+/* ---------- Switch ---------- */
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.switch input { display: none; }
+.switch .track {
+  position: relative;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 22px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 122, 24, 0.25);
+  transition: background 0.2s;
+}
+.switch .track::after {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #8d76b4;
+  transition: transform 0.2s, background 0.2s;
+}
+.switch input:checked + .track {
+  background: linear-gradient(90deg, rgba(255, 45, 0, 0.8), rgba(255, 122, 24, 0.9));
+}
+.switch input:checked + .track::after {
+  transform: translateX(19px);
+  background: #fff3e0;
+}
+.switch output { color: var(--orange); font-weight: 600; }
+
+/* =========================================================
+   Grid alfabet
+   ========================================================= */
+.board {
+  position: relative;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 122, 24, 0.25);
+  background: rgba(10, 2, 20, 0.55);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+  gap: 12px;
+}
+
+.letter {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 122, 24, 0.18);
+  background: rgba(0, 0, 0, 0.42);
+  color: #9b86c0;
+  font-family: "Creepster", cursive;
+  font-size: clamp(1.5rem, 4.2vw, 2.4rem);
+  line-height: 1;
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s,
+              transform 0.3s, border-color 0.3s, opacity 0.3s;
+}
+
+/* huruf yang tidak terpilih jadi redup saat ada highlight */
+.grid.has-active .letter:not(.active) { opacity: 0.45; }
+
+/* ---------- Huruf terpilih ---------- */
+.letter.active {
+  color: #20060f;
+  border-color: #ffd39b;
+  background: linear-gradient(180deg, #ffb347, var(--orange) 55%, var(--orange-deep));
+  box-shadow:
+    0 0 26px rgba(255, 122, 24, 0.9),
+    0 0 60px rgba(255, 45, 0, 0.55),
+    inset 0 0 22px rgba(255, 255, 255, 0.28);
+  transform: translateY(-6px) scale(1.08);
+  z-index: 2;
+  animation: floaty 2.8s ease-in-out infinite;
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(-6px) scale(1.08) rotate(0deg); }
+  50%      { transform: translateY(-13px) scale(1.1) rotate(-2deg); }
+}
+
+/* animasi saat baru terpilih */
+.letter.pop {
+  animation: pop 0.55s cubic-bezier(0.2, 1.7, 0.45, 1);
+}
+@keyframes pop {
+  0%   { transform: scale(0.35) rotate(-22deg); filter: brightness(2.4); }
+  55%  { transform: scale(1.32) rotate(8deg); filter: brightness(1.5); }
+  100% { transform: translateY(-6px) scale(1.08) rotate(0deg); filter: brightness(1); }
+}
+
+/* percikan sinar di belakang huruf terpilih */
+.letter.active::before {
+  content: "";
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 160, 60, 0.55), transparent 68%);
+  animation: pulse 1.6s ease-in-out infinite;
+  z-index: -1;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(0.9); opacity: 0.55; }
+  50%      { transform: scale(1.25); opacity: 1; }
+}
+
+/* hantu kecil nongol di sudut huruf terpilih */
+.letter.active::after {
+  content: "👻";
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  font-size: 1.05rem;
+  animation: bob 2.2s ease-in-out infinite;
+}
+
+/* =========================================================
+   Animasi highlight berjalan (roulette)
+   ========================================================= */
+.grid.spinning .letter { opacity: 0.3; transition: none; }
+.grid.spinning .letter.spin {
+  opacity: 1;
+  color: #20060f;
+  border-color: #ffd39b;
+  background: linear-gradient(180deg, #ffd39b, var(--orange));
+  box-shadow: 0 0 24px rgba(255, 122, 24, 0.95), inset 0 0 18px rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px) scale(1.04);
+}
+
+/* tombol saat sedang mengacak */
+.btn-pick:disabled { cursor: not-allowed; opacity: 0.85; transform: none; }
+.btn-pick.busy { animation: buzz 0.4s ease-in-out infinite alternate; }
+@keyframes buzz {
+  from { box-shadow: 0 0 18px rgba(255, 122, 24, 0.5); }
+  to   { box-shadow: 0 0 44px rgba(255, 122, 24, 1); }
+}
+
+/* =========================================================
+   Pop up huruf besar saat highlight berhenti
+   ========================================================= */
+.burst {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+.burst span {
+  font-family: "Creepster", cursive;
+  font-size: clamp(5rem, 18vw, 12rem);
+  line-height: 1;
+  color: #ffb347;
+  opacity: 0;
+  text-shadow:
+    0 0 18px #ff7a18,
+    0 0 55px #ff2d00,
+    0 0 90px rgba(255, 45, 0, 0.8),
+    0 6px 0 rgba(0, 0, 0, 0.5);
+}
+.burst.show span { animation: burstPop 2s cubic-bezier(0.2, 1.3, 0.35, 1) forwards; }
+/* durasi 2s ini harus sama dengan BURST_MS di app.js */
+@keyframes burstPop {
+  0%   { opacity: 0;    transform: scale(0.12) rotate(-28deg); filter: brightness(2.8); }
+  20%  { opacity: 0.95; transform: scale(1.2) rotate(7deg);    filter: brightness(1.6); }
+  38%  { opacity: 0.95; transform: scale(1.02) rotate(-4deg);  filter: brightness(1.15); }
+  58%  { opacity: 0.9;  transform: scale(1) rotate(2deg);      filter: brightness(1.05); }
+  78%  { opacity: 0.85; transform: scale(1.02) rotate(0deg);   filter: brightness(1); }
+  100% { opacity: 0;    transform: scale(1.65) rotate(0deg);   filter: brightness(1); }
+}
+
+/* =========================================================
+   Toast
+   ========================================================= */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translate(-50%, 24px);
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #2a1046, #150626);
+  border: 1px solid var(--orange);
+  color: #ffe4c4;
+  font-size: 0.86rem;
+  box-shadow: 0 0 26px rgba(255, 122, 24, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 50;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .decor span, .logo, .bob, .letter, .letter.active, .letter.pop,
+  .letter.active::before, .letter.active::after,
+  .grid.spinning .letter.spin, .btn-pick.busy, .burst span { animation: none !important; }
+  .burst { display: none; }
+}
+
+@media (max-width: 520px) {
+  .board { padding: 14px; }
+  .grid { grid-template-columns: repeat(auto-fit, minmax(56px, 1fr)); gap: 9px; }
+  .letter.active::after { font-size: 0.85rem; top: -9px; right: -6px; }
+}

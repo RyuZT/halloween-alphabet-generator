@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🎃 Halloween Alphabet Generator</title>
+<meta name="description" content="Generator alfabet A-Z dengan highlight huruf random dan animasi bertema Halloween." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Creepster&family=Poppins:wght@300;400;600&display=swap"
+  rel="stylesheet"
+/>
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- dekorasi terbang -->
+<div class="decor" id="decor" aria-hidden="true"></div>
+
+<header class="site-header">
+  <h1 class="logo"><span class="bob">🎃</span> Alphabet Generator <span class="bob">🦇</span></h1>
+  <p class="tagline">Satu huruf dipilih secara acak dari A sampai Z 👻</p>
+</header>
+
+<main class="app">
+
+  <!-- Panel aksi -->
+  <section class="panel">
+    <button type="button" class="btn-pick" id="btnPick">
+      🎲 Acak Huruf
+    </button>
+
+    <p class="hint">atau tekan <kbd>Spasi</kbd></p>
+
+    <label class="switch">
+      <input type="checkbox" id="toggleSound" checked />
+      <span class="track"></span>
+      <span>Bunyi "klek" saat huruf muncul</span>
+    </label>
+  </section>
+
+  <!-- Grid A-Z -->
+  <section class="board" aria-label="Huruf A sampai Z">
+    <div class="grid" id="grid"></div>
+    <div class="burst" id="burst" aria-hidden="true"><span id="burstLetter"></span></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Hasil: <strong id="result">—</strong> &nbsp;•&nbsp; Total acak: <strong id="count">0</strong> 🕷️</p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
