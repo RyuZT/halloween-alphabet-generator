@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>🎃 Halloween Alphabet Generator</title>
-<meta name="description" content="Generator alfabet A-Z dengan highlight huruf random dan animasi bertema Halloween." />
+<meta name="description" content="Generator huruf dengan animasi ngocok bertema Halloween. Huruf disembunyikan, diacak, lalu muncul besar dan menetap." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,10 +22,19 @@
 
 <header class="site-header">
   <h1 class="logo"><span class="bob">🎃</span> Alphabet Generator <span class="bob">🦇</span></h1>
-  <p class="tagline">Satu huruf dipilih secara acak dari A sampai Z 👻</p>
+  <p class="tagline">Hurufnya disembunyikan — diacak dulu, baru muncul 👻</p>
 </header>
 
 <main class="app">
+
+  <!-- Papan: huruf besar di tengah + baris tile ngocok -->
+  <section class="board">
+    <div class="stage">
+      <span class="letter-big idle" id="bigLetter" aria-hidden="true">?</span>
+    </div>
+
+    <div class="grid" id="grid" aria-hidden="true"></div>
+  </section>
 
   <!-- Panel aksi -->
   <section class="panel">
@@ -42,16 +51,11 @@
     </label>
   </section>
 
-  <!-- Grid A-Z -->
-  <section class="board" aria-label="Huruf A sampai Z">
-    <div class="grid" id="grid"></div>
-    <div class="burst" id="burst" aria-hidden="true"><span id="burstLetter"></span></div>
-  </section>
-
 </main>
 
 <footer class="site-footer">
-  <p>Hasil: <strong id="result">—</strong> &nbsp;•&nbsp; Total acak: <strong id="count">0</strong> 🕷️</p>
+  <span class="sr-only" id="result" aria-live="polite">—</span>
+  <p>Total acak: <strong id="count">0</strong> 🕷️</p>
 </footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

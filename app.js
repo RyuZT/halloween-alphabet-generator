@@ -8,8 +8,10 @@
    1. Data & state
    --------------------------------------------------------- */
 
-const ALPHABET = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
-const BURST_MS = 2000; // durasi pop up, harus sama dengan animasi burstPop di style.css
+/* Huruf yang dipakai. Tinggal edit array ini kalau mau
+   menambah / menghapus huruf dari daftar acak.
+   D,E,F,H,I,J,N,Q,R,U,V,W,X,Y,Z sudah dibuang. */
+const LETTERS = ["A", "B", "C", "G", "K", "L", "M", "O", "P", "S", "T"];
 
 const state = {
   current: null,      // huruf yang sedang di-highlight
@@ -27,12 +29,11 @@ const el = {
   grid: $("grid"),
   btnPick: $("btnPick"),
   toggleSound: $("toggleSound"),
+  bigLetter: $("bigLetter"),
   result: $("result"),
   count: $("count"),
   toast: $("toast"),
   decor: $("decor"),
-  burst: $("burst"),
-  burstLetter: $("burstLetter"),
 };
 
 /* ---------------------------------------------------------
@@ -117,23 +118,20 @@ function playKlek() {
 }
 
 /* ---------------------------------------------------------
-   5. Membangun grid A-Z
+   5. Membangun papan ngocok (tile kosong, tanpa huruf)
    --------------------------------------------------------- */
 
 function buildGrid() {
   el.grid.innerHTML = "";
-  ALPHABET.forEach((letter) => {
-    const tile = document.createElement("button");
-    tile.type = "button";
+  LETTERS.forEach((letter) => {
+    const tile = document.createElement("div");
     tile.className = "letter";
     tile.dataset.letter = letter;
-    tile.textContent = letter;
-    tile.setAttribute("aria-label", "Huruf " + letter);
-    // klik manual: pilih huruf ini
-    tile.addEventListener("click", () => {
-      if (spinning) return;
-      select(letter, { manual: true });
-    });
+
+    const mark = document.createElement("span");
+    mark.className = "mark";
+    tile.appendChild(mark);
+
     el.grid.appendChild(tile);
   });
 }
@@ -151,7 +149,6 @@ const SPIN_SLOW = 220;   // tambahan jeda di akhir (ms)
 
 let spinning = false;
 let spinTimer = null;
-let burstTimer = null;
 
 function tileOf(letter) {
   return el.grid.querySelector(`.letter[data-letter="${letter}"]`);
@@ -161,8 +158,8 @@ function clearSpinHighlight() {
   el.grid.querySelectorAll(".letter.spin").forEach((t) => t.classList.remove("spin"));
 }
 
-/* --- pilih huruf final + animasi pop --- */
-function select(letter, { manual = false, silent = false, burst = false } = {}) {
+/* --- pilih huruf final + reveal huruf besar --- */
+function select(letter, { manual = false, silent = false } = {}) {
   const tile = tileOf(letter);
   if (!tile) return;
 
@@ -188,9 +185,8 @@ function select(letter, { manual = false, silent = false, burst = false } = {}) 
     }
   });
 
-  // pop up huruf besar
-  if (burst) showBurst(letter);
-  else hideBurst(); // jangan biarkan pop up huruf lama menempel
+  // huruf besar muncul dan MENETAP sampai diacak lagi
+  showBigLetter(letter);
 
   // update info
   if (!manual) {
@@ -203,20 +199,20 @@ function select(letter, { manual = false, silent = false, burst = false } = {}) 
   if (manual) toast("Kamu pilih huruf " + letter);
 }
 
-/* --- pop up huruf besar di tengah papan --- */
-function hideBurst() {
-  clearTimeout(burstTimer);
-  burstTimer = null;
-  el.burst.classList.remove("show");
+/* --- huruf besar di tengah papan --- */
+function showBigLetter(letter) {
+  const b = el.bigLetter;
+  b.classList.remove("idle", "rolling", "show");
+  b.textContent = letter;
+  void b.offsetWidth; // reflow agar animasi reveal main ulang
+  b.classList.add("show"); // .show = animasi reveal + glow, TIDAK menghilang
 }
 
-function showBurst(letter) {
-  hideBurst();
-  el.burstLetter.textContent = letter;
-  void el.burst.offsetWidth; // reflow agar animasi main ulang
-  el.burst.classList.add("show");
-
-  burstTimer = setTimeout(() => el.burst.classList.remove("show"), BURST_MS);
+/* --- tanda tanya berdenyut selama mengocok --- */
+function markRolling() {
+  const b = el.bigLetter;
+  b.classList.remove("show", "idle");
+  b.classList.add("rolling");
 }
 
 /* --- animasi highlight berjalan, melambat, lalu berhenti --- */
@@ -224,7 +220,7 @@ function spinTo(target, { silent = false } = {}) {
   spinning = true;
   el.btnPick.disabled = true;
   el.btnPick.classList.add("busy");
-  hideBurst(); // bersihkan pop up lama sebelum highlight berjalan
+  markRolling(); // huruf besar diredupkan selama dikocok
 
   // matikan highlight lama, aktifkan mode spinning
   el.grid.querySelectorAll(".letter.active").forEach((t) => t.classList.remove("active", "pop"));
@@ -240,7 +236,7 @@ function spinTo(target, { silent = false } = {}) {
     }
     // lompatan terakhir mendarat di huruf target
     const isLast = i === SPIN_STEPS - 1;
-    const letter = isLast ? target : pick(ALPHABET);
+    const letter = isLast ? target : pick(LETTERS);
 
     clearSpinHighlight();
     const t = tileOf(letter);
@@ -257,7 +253,7 @@ function spinTo(target, { silent = false } = {}) {
     spinning = false;
     el.btnPick.disabled = false;
     el.btnPick.classList.remove("busy");
-    select(target, { silent, burst: true });
+    select(target, { silent });
   };
 
   tick();
@@ -268,10 +264,10 @@ function shuffle({ silent = false } = {}) {
   if (spinning) return;
 
   // hindari mengulang huruf yang sama dua kali berturut-turut
-  let next = pick(ALPHABET);
-  if (ALPHABET.length > 1) {
+  let next = pick(LETTERS);
+  if (LETTERS.length > 1) {
     let guard = 0;
-    while (next === state.current && guard++ < 20) next = pick(ALPHABET);
+    while (next === state.current && guard++ < 20) next = pick(LETTERS);
   }
 
   if (reduceMotion) select(next, { silent });
@@ -323,10 +319,14 @@ document.addEventListener("keydown", (e) => {
     shuffle();
     return;
   }
-  // huruf A-Z = pilih huruf itu
+  // huruf yang tersedia = langsung pilih; selain itu kasih info
   const k = e.key.toUpperCase();
-  if (!spinning && k.length === 1 && k >= "A" && k <= "Z") {
+  if (spinning || k.length !== 1 || k < "A" || k > "Z") return;
+
+  if (LETTERS.includes(k)) {
     select(k, { manual: true });
+  } else {
+    toast("Huruf " + k + " tidak dipakai 🚫");
   }
 });
 

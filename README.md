@@ -1,6 +1,18 @@
 # 🎃 Halloween Alphabet Generator
 
-Generator alfabet **A–Z** sederhana bertema Halloween. Semua huruf tampil di grid, lalu **satu huruf di-highlight secara acak** dengan animasi.
+Generator huruf bertema Halloween. Hurufnya **disembunyikan** di papan — kamu cuma lihat animasi ngocoknya, lalu huruf hasilnya **muncul besar di tengah dan menetap** (tidak hilang) sampai kamu tekan Acak lagi.
+
+Layout-nya **portrait**: kolom yang di-center di tengah layar, jadi enak dilihat di HP maupun desktop.
+
+## 🎯 Huruf yang dipakai
+
+Pool hurufnya bisa diatur di `app.js` (variabel `LETTERS`). Saat ini berisi **11 huruf**:
+
+```
+A  B  C  G  K  L  M  O  P  S  T
+```
+
+Huruf yang **tidak dipakai**: `D E F H I J N Q R U V W X Y Z`
 
 ## 🚀 Cara Menjalankan
 
@@ -20,37 +32,45 @@ Lalu buka `http://127.0.0.1:8765/index.html`.
 
 | Fitur | Keterangan |
 |---|---|
-| 🔤 Grid A–Z | 26 huruf kapital ditampilkan di grid responsif |
-| 🎰 Highlight berjalan | Saat diacak, highlight melompat-lompat antar huruf sambil **melambat**, lalu berhenti |
-| 🎯 Highlight random | Huruf terpilih membesar, menyala oranye, dan melayang |
-| 💥 Animasi pop | Tiap huruf baru muncul dengan animasi "pop" + putaran + percikan cahaya |
-| 🅰️ Pop up huruf | Setelah highlight berhenti, huruf muncul besar di tengah papan selama **2 detik** |
-| 👻 Penanda | Hantu kecil nongol di sudut huruf terpilih |
+| 📱 Layout portrait | Kolom di-center di tengah layar, elemen besar dan lega |
+| 🅰️ Huruf besar di tengah | Panggung besar untuk huruf hasil — ukurannya ikut lebar papan |
+| 📌 Hasil menetap | Setelah di-roll, hurufnya **tetap tampil** dan tidak hilang; baru berganti kalau di-roll lagi |
+| 🫥 Huruf disembunyikan | Tile di papan tidak menampilkan huruf sama sekali, cuma tanda kecil |
+| 🎰 Animasi ngocok | Highlight melompat-lompat antar tile sambil **melambat**, lalu berhenti |
+| 🎯 Tile terpilih | Tile pemenang membesar, menyala oranye, dan melayang |
+| 💥 Animasi pop | Tile pemenang "meletup" dengan animasi pop + putaran + percikan cahaya |
+| 👻 Penanda | Hantu kecil nongol di sudut tile terpilih |
 | 🎲 Tombol Acak | Atau tekan tombol **Spasi** / **Enter** |
-| ⌨️ Pilih manual | Klik huruf mana pun (atau tekan tombol huruf di keyboard) untuk memilihnya |
+| ⌨️ Pilih manual | Tekan tombol huruf di keyboard (hanya huruf yang ada di pool) |
+| 🚫 Huruf terhapus | Kalau tekan huruf yang sudah dibuang, muncul info "tidak dipakai" |
 | 🔊 Bunyi "klek" | Efek suara dibuat pakai Web Audio API, tanpa file audio |
 | 🌫️ Dekorasi | 🎃🦇👻🕷️ berjatuhan di latar belakang |
-| 📊 Info | Huruf terpilih + total berapa kali sudah diacak di bagian bawah |
 
 ## 📁 Struktur
 
 ```
 Letter Generator/
-├── index.html   → grid A–Z + panel tombol
+├── index.html   → papan animasi + panel tombol
 ├── style.css    → desain Halloween + semua animasi
-├── app.js       → logika acak, animasi roulette, pop up, efek suara
+├── app.js       → pool huruf, animasi ngocok, reveal huruf, efek suara
 └── README.md
 ```
 
 ## 🧠 Catatan Teknis
 
-- Huruf dibangkitkan dari kode ASCII (`65`–`90`) sehingga tidak perlu daftar manual.
+- **Mau ganti daftar huruf?** Edit satu baris di `app.js`:
+  ```js
+  const LETTERS = ["A", "B", "C", "G", "K", "L", "M", "O", "P", "S", "T"];
+  ```
+  Jumlah tile di papan otomatis ikut menyesuaikan, dan keyboard juga otomatis menolak huruf yang tidak ada di daftar.
+- Tile dibuat sebagai `<div>` (bukan tombol) dan papannya `aria-hidden` karena murni dekorasi — hasilnya diumumkan lewat elemen `#result` yang `aria-live="polite"` dan disembunyikan secara visual (`.sr-only`).
 - Huruf yang sama tidak akan muncul dua kali berturut-turut.
-- **Animasi highlight berjalan**: 12 lompatan dengan jeda yang membesar secara eksponensial (`45ms` → `~265ms`) sehingga terasa seperti roda berputar yang melambat. Selama proses ini tombol dinonaktifkan supaya tidak bisa di-spin ganda.
-- **Durasi pop up** diatur di dua tempat dan harus sama: `BURST_MS = 2000` di `app.js` dan `animation: burstPop 2s` di `style.css`.
-- Animasi `pop` dipicu ulang dengan trik *force reflow* (`void tile.offsetWidth`) supaya tetap main walau hurufnya sama-sama kelas `active`.
+- **Animasi ngocok**: 12 lompatan dengan jeda yang membesar secara eksponensial (`45ms` → `~265ms`) sehingga terasa seperti roda berputar yang melambat. Selama proses ini tombol dinonaktifkan supaya tidak bisa di-spin ganda.
+- **Huruf menetap** karena `.letter-big.show` memakai animasi `letterReveal` dengan `animation-fill-mode: forwards` yang berakhir di `opacity: 1` (bukan memudar), lalu dilanjutkan `bigGlow` tanpa batas.
+- Ukuran huruf besar pakai `42cqw` (container query unit, mengikuti lebar papan) dengan fallback `22vw` untuk browser lama.
+- Animasi `pop` dan `letterReveal` dipicu ulang dengan trik *force reflow* (`void el.offsetWidth`).
 - Efek suara baru aktif **setelah interaksi pertama** (aturan autoplay browser), dan dibuat murni dengan `OscillatorNode` + noise buffer.
 - Font `Creepster` diambil dari Google Fonts; tanpa internet otomatis jatuh ke font `cursive`.
-- Menghormati `prefers-reduced-motion` — kalau opsi itu aktif di OS, roulette dan pop up otomatis dimatikan dan huruf langsung ditampilkan.
+- Menghormati `prefers-reduced-motion` — kalau opsi itu aktif di OS, animasi ngocok dimatikan dan huruf langsung ditampilkan.
 
 Selamat Halloween! 🎃👻🕷️
